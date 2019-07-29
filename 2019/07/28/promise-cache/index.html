@@ -3,19 +3,23 @@
 <head><meta name="generator" content="Hexo 3.8.0">
   <meta charset="utf-8">
   
-  <title>Archives | Alan</title>
+  <title>利用 promise cache 特性实现 http 请求的缓存 | Alan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
   
   
   
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Alan">
-<meta property="og:url" content="http://yoursite.com/archives/index.html">
+  <meta name="description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。而今天记录一下 Promise 不常用的一个特性 - cache 特性。 首先，先看一下下面的代码： 1234567891">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用 promise cache 特性实现 http 请求的缓存">
+<meta property="og:url" content="http://yoursite.com/2019/07/28/promise-cache/index.html">
 <meta property="og:site_name" content="Alan">
+<meta property="og:description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。而今天记录一下 Promise 不常用的一个特性 - cache 特性。 首先，先看一下下面的代码： 1234567891">
 <meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-07-29T02:27:59.256Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Alan">
+<meta name="twitter:title" content="利用 promise cache 特性实现 http 请求的缓存">
+<meta name="twitter:description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。而今天记录一下 Promise 不常用的一个特性 - cache 特性。 首先，先看一下下面的代码： 1234567891">
   
     <link rel="alternate" href="/atom.xml" title="Alan" type="application/atom+xml">
   
@@ -54,8 +58,6 @@
   
 
   
-    <link rel="stylesheet" href="/css/archive.css">
-  
   
   
 
@@ -63,7 +65,7 @@
 </html>
 
 
-  <body>
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
 
   
@@ -85,7 +87,7 @@
 
             
               <a class="brand" style="
-                 margin-top: 0px;">
+                 margin-top: 0px;" href="#" data-toggle="modal" data-target="#myModal">
                   <img width="120px" height="120px" alt="Hike News" src="/css/images/ala.jpg">
               </a>
             
@@ -154,217 +156,104 @@
             
       <div id="content" class="outer">
         
-          <section id="main">
-  <div class="archives-tags-wrap"><blockquote><span>There are 4 posts in total till now.</span></blockquote>
+          <section id="main" style="float:none;"><article id="post-promise-cache" style="width: 75%; float:left;" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div id="articleInner" class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      利用 promise cache 特性实现 http 请求的缓存
+    </h1>
+  
 
-
-<!-- 分页显示 -->
-
-	
-	
-		
-		
-		  
-		  
-		  <section class="archives-wrap">
-		    <div class="archive-year-wrap">
-		      <h1><a href="/archives/2019" class="archive-year">2019</a></h1>
-		    </div>
-		    <div class="archives">
-		
-		<article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
+      </header>
+    
+    <div class="article-meta">
       
-	<a href="/2019/07/28/promise-cache/" class="archive-article-date">
+	<a href="/2019/07/28/promise-cache/" class="article-date">
 	  <time datetime="2019-07-28T15:26:56.969Z" itemprop="datePublished">2019-07-28</time>
 	</a>
 
       
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/2019/07/28/promise-cache/">利用 promise cache 特性实现 http 请求的缓存</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-	
-		
-		
-		  
-		    </div></section>
-		  
-		  
-		  <section class="archives-wrap">
-		    <div class="archive-year-wrap">
-		      <h1><a href="/archives/2018" class="archive-year">2018</a></h1>
-		    </div>
-		    <div class="archives">
-		
-		<article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
       
-	<a href="/2018/11/20/如何学习才能促进自己的独立思考能力？/" class="archive-article-date">
-	  <time datetime="2018-11-20T07:04:04.000Z" itemprop="datePublished">2018-11-20</time>
+	<a class="article-views">
+	<span id="busuanzi_container_page_pv">
+		PV:<span id="busuanzi_value_page_pv"></span>
+	</span>
 	</a>
 
+    </div>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/2018/11/20/如何学习才能促进自己的独立思考能力？/">如何学习才能提升自己的独立思考能力？</a>
-    </h1>
-  
+        <p>大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。</p>
+<p>在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。<br>而今天记录一下 Promise 不常用的一个特性 - cache 特性。</p>
+<p>首先，先看一下下面的代码：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const promise = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">  setTimeout(() =&gt; &#123;</span><br><span class="line">   resolve(new Date().getTime());</span><br><span class="line">  &#125;, 2000)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">let</span> time1, time2</span><br><span class="line">promise.then((result) =&gt; &#123;</span><br><span class="line">  time1 = result</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 两次调用 <span class="keyword">then</span> 方法中间留一段间隔</span><br><span class="line"></span><br><span class="line">promise.then((result) =&gt; &#123;</span><br><span class="line">  console.log(time2 === time1)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 最终运行结果是：</span><br><span class="line">// <span class="literal">true</span></span><br></pre></td></tr></table></figure>
 
-    </header>
+      
+    </div>
+    <footer class="article-footer">
+      
+      
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+
+      
+      
+
+    </footer>
   </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2018/11/20/如何学习才能促进自己的独立思考能力？/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">如何学习才能提升自己的独立思考能力？</div>
+    </a>
+  
+</nav>
+
+  
 </article>
-	
-		
-		
-		<article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/2018/10/29/ForeverYoung/" class="archive-article-date">
-	  <time datetime="2018-10-29T12:03:22.000Z" itemprop="datePublished">2018-10-29</time>
-	</a>
 
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/2018/10/29/ForeverYoung/">《无问西东》</a>
-    </h1>
-  
+<!-- Table of Contents -->
 
-    </header>
-  </div>
-</article>
-	
-		
-		
-		<article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      
-	<a href="/2018/10/29/hello-world/" class="archive-article-date">
-	  <time datetime="2018-10-29T11:30:21.478Z" itemprop="datePublished">2018-10-29</time>
-	</a>
-
-      
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="archive-article-title" href="/2018/10/29/hello-world/">Hello World</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-	
-	
-		</div></section>
-	
-
-	<!-- 页数指示器 -->
-	
-
-
-
-
-</div></section>
-          <aside id="sidebar">
-  
+  <aside id="toc-sidebar">
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">Contents</strong>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">Connect</h3>
-    <div class="widget widget_athemes_social_icons">
-
-    	<ul class="clearfix widget-social-icons">   
-    	
-          
-     			  <li><a href="https://weibo.com/3650816602/profile" title="Weibo"><i class="fa fa-weibo" aria-hidden="true"></i></a></li> 
-          
-   		
-   		</ul>
-
-
-   		<!--
-   		<ul class="clearfix widget-social-icons">   		
-   		<li class="widget-si-twitter"><a href="http://twitter.com" title="Twitter"><i class="ico-twitter"></i></a></li> 
-		<li class="widget-si-facebook"><a href="http://facebook.com" title="Facebook"><i class="ico-facebook"></i></a></li>
-			<li class="widget-si-gplus"><a href="http://plus.google.com" title="Google+"><i class="ico-gplus"></i></a></li>
-			<li class="widget-si-pinterest"><a href="http://pinterest.com" title="Pinterest"><i class="ico-pinterest"></i></a></li>
-			<li class="widget-si-flickr"><a href="http://flickr.com" title="Flickr"><i class="ico-flickr"></i></a></li>
-			<li class="widget-si-instagram"><a href="http://instagram.com" title="Instagram"><i class="ico-instagram"></i></a></li>
-		</ul> -->
-
-    </div>
-  </div>
-
-
-  
+        <ol class="nav">None</ol>
     
-  <div class="widget-wrap">
-    <h3 class="widget-title">Categories</h3>
-    <div class="widget">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/思考🤔/">思考🤔</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/感悟-心得/">感悟&心得</a><span class="category-list-count">1</span></li></ul>
     </div>
-  </div>
+  </aside>
 
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
-    <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/movie/">movie</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/独立思考/">独立思考</a><span class="tag-list-count">1</span></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
-
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/10/">October 2018</a><span class="archive-list-count">2</span></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2019/07/28/promise-cache/">利用 promise cache 特性实现 http 请求的缓存</a>
-          </li>
-        
-          <li>
-            <a href="/2018/11/20/如何学习才能促进自己的独立思考能力？/">如何学习才能提升自己的独立思考能力？</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/29/ForeverYoung/">《无问西东》</a>
-          </li>
-        
-          <li>
-            <a href="/2018/10/29/hello-world/">Hello World</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
+</section>
         
       </div>
       
@@ -460,6 +349,8 @@
 
 
 
+  <script src="/js/dialog.js"></script>
+
 
 
 
@@ -543,6 +434,8 @@
   
   <a id="rocket" href="#top" class=""></a>
   <script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+  
+    <a id="menu-switch"><i class="fa fa-bars fa-lg"></i></a>
   
 </body>
 </html>
