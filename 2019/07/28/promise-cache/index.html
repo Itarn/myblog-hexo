@@ -6,20 +6,23 @@
   <title>利用 promise cache 特性实现 http 请求的缓存 | Alan</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   
+  <meta name="keywords" content="promise">
   
   
   
-  <meta name="description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。而今天记录一下 Promise 不常用的一个特性 - cache 特性。 首先，先看一下下面的代码： 1234567891">
+  
+  <meta name="description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。 而今天记录一下 Promise 另一特性 - cache 特性。 首先，先看一下下面的代码： 1234567891011">
+<meta name="keywords" content="promise">
 <meta property="og:type" content="article">
 <meta property="og:title" content="利用 promise cache 特性实现 http 请求的缓存">
 <meta property="og:url" content="http://yoursite.com/2019/07/28/promise-cache/index.html">
 <meta property="og:site_name" content="Alan">
-<meta property="og:description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。而今天记录一下 Promise 不常用的一个特性 - cache 特性。 首先，先看一下下面的代码： 1234567891">
+<meta property="og:description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。 而今天记录一下 Promise 另一特性 - cache 特性。 首先，先看一下下面的代码： 1234567891011">
 <meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-07-29T02:27:59.256Z">
+<meta property="og:updated_time" content="2019-07-29T02:36:04.009Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="利用 promise cache 特性实现 http 请求的缓存">
-<meta name="twitter:description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。而今天记录一下 Promise 不常用的一个特性 - cache 特性。 首先，先看一下下面的代码： 1234567891">
+<meta name="twitter:description" content="大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。 在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。 而今天记录一下 Promise 另一特性 - cache 特性。 首先，先看一下下面的代码： 1234567891011">
   
     <link rel="alternate" href="/atom.xml" title="Alan" type="application/atom+xml">
   
@@ -177,6 +180,8 @@
 	</a>
 
       
+    <a class="article-category-link" href="/categories/ES6/">ES6</a>
+
       
 	<a class="article-views">
 	<span id="busuanzi_container_page_pv">
@@ -188,9 +193,15 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>大家都知道，Promise是异步变成的一种解决方案，ES6将其写进了语言标准，统一了用法，原生提供了 Promise 对象。</p>
-<p>在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。<br>而今天记录一下 Promise 不常用的一个特性 - cache 特性。</p>
+<p>在日常的使用中，大部分是用它封装异步操作的逻辑，比如向后端请求的 service 文件，会对请求回来的不同状态码等有一层逻辑封装，使用时代码会更加简洁。</p>
+<p>而今天记录一下 Promise 另一特性 - cache 特性。</p>
 <p>首先，先看一下下面的代码：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">const promise = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">  setTimeout(() =&gt; &#123;</span><br><span class="line">   resolve(new Date().getTime());</span><br><span class="line">  &#125;, 2000)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">let</span> time1, time2</span><br><span class="line">promise.then((result) =&gt; &#123;</span><br><span class="line">  time1 = result</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 两次调用 <span class="keyword">then</span> 方法中间留一段间隔</span><br><span class="line"></span><br><span class="line">promise.then((result) =&gt; &#123;</span><br><span class="line">  console.log(time2 === time1)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 最终运行结果是：</span><br><span class="line">// <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">const promise = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">  setTimeout(() =&gt; &#123;</span><br><span class="line">   resolve(new Date().getTime());</span><br><span class="line">  &#125;, 2000)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"><span class="built_in">let</span> time1, time2</span><br><span class="line"></span><br><span class="line">promise.then((result) =&gt; &#123;</span><br><span class="line">  time1 = result</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 两次调用 <span class="keyword">then</span> 方法中间留一段间隔</span><br><span class="line"></span><br><span class="line">promise.then((result) =&gt; &#123;</span><br><span class="line">  time2 = result</span><br><span class="line">  console.log(time2 === time1)</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">// 最终运行结果是：</span><br><span class="line">// <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+<p>你会发现，最终运行结果为 true. 为什么第二次调用 then 的时候，还是返回第一次 resolve 的结果。这就引出 Promise 的一个特性：</p>
+<p>“一旦状态改变，就不会再变，任何时候都可以得到这个结果。Promise对象的状态改变，只有两种可能：从pending变为fulfilled和从pending变为rejected。只要这两种情况发生，状态就凝固了，不会再变了，会一直保持这个结果，这时就称为 resolved（已定型）。如果改变已经发生了，你再对Promise对象添加回调函数，也会立即得到这个结果。这与事件（Event）完全不同，事件的特点是，如果你错过了它，再去监听，是得不到结果的。”<br>More info: <a href="http://es6.ruanyifeng.com/#docs/promise" target="_blank" rel="noopener">promise</a></p>
+<p>我们可以利用这个特性做些什么事情呢？</p>
+<p>如果一个前端数据请求返回的是一个 Promise，那么很容易利用这个特性实现数据缓存：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">let</span> _getPromise</span><br><span class="line"></span><br><span class="line">_getPromise = new Promise((resolve, reject) =&gt; &#123;</span><br><span class="line">  axios.get(<span class="string">'url'</span>).<span class="keyword">then</span>((data) =&gt; resolve(data))</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">_getPromise.then((data) =&gt; &#123; console.log(data) &#125;)</span><br></pre></td></tr></table></figure>
 
       
     </div>
